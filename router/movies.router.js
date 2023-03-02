@@ -1,15 +1,17 @@
 import express from "express";
 const router= express.Router();
-import {client} from "../index.js";
+import { getAllMovies,
+   getMovieById,
+   createMovies,
+   deleteMovieById,
+   updateMovieById } 
+   from "./service/movies.server.js";
 
 router.get("/",async  function (request, response) {
     //db.movies.find({})
     
     // Cursor->pagination(20) | Cursor to array
-        const movies= await client
-        .db("b42wd")
-        .collection("movies")
-        .find({}).toArray();
+        const movies= await getAllMovies();
         
         console.log(movies);
         
@@ -31,10 +33,7 @@ router.get("/",async  function (request, response) {
         //   GET OPERATION to get data from from database
         // db.movies.findOne({"id":"100"})
     
-    const movie=await client
-    .db("b42wd")
-    .collection("movies")
-    .findOne({id:id});
+    const movie=await getMovieById(id);
        
         // const movie=movies.find((mv)=>mv.id==id);
         movie? response.send(movie):response.status(404).send({message:"NO MATCH FOUND"});
@@ -52,10 +51,7 @@ router.get("/",async  function (request, response) {
     router.post("/", async  function (request, response) {
         const data=request.body; //request used to get the data
     console.log(data);
-        const result =await client
-        .db("b42wd")
-        .collection("movies")
-        .insertMany( data);
+        const result =await createMovies(data);
     
     
         response.send(result);
@@ -76,10 +72,7 @@ router.get("/",async  function (request, response) {
     
         // db.movies.deleteOne({"id":"100"})
     
-    const result=await client
-    .db("b42wd")
-    .collection("movies")
-    .deleteOne({id:id});
+    const result=await deleteMovieById(id);
        
     console.log(result);
     
@@ -105,12 +98,11 @@ router.get("/",async  function (request, response) {
         const data =request.body;
         console.log(data);
     
-        const result=await client
-    .db("b42wd")
-    .collection("movies")
-    .updateOne({id:id},{$set:data});
+        const result=await updateMovieById(id, data);
     response.send(result);
     
       });
 
 export default router;      
+
+
